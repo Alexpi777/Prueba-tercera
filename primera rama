@@ -1,0 +1,55 @@
+Me quiero suicidar, que alguien me mate.
+using System;
+using System.Collections;
+using UnityEngine;
+
+
+
+ 
+    public class Teleporter : MonoBehaviour
+    {
+        new public Collider collider;//identifica el collider del objeto
+        public LayerMask layers;//Layer del jugador Player que realiza el teletransporte
+
+      
+        public Transform destinationTransform;//destino donde queremos ir
+        public float delayTime;//tiempo de espera
+        
+
+        WaitForSeconds delay;
+
+        IEnumerator Activate(GameObject teleportee)
+        {
+            if (destinationTransform)
+            {
+             
+                yield return delay;
+              
+                teleportee.transform.position = destinationTransform.position;
+                teleportee.transform.rotation = destinationTransform.rotation;
+            }
+        }
+
+        void Reset()
+        {
+            collider = GetComponent<Collider>();
+            collider.isTrigger = true;
+        }
+
+        void Awake()
+        {
+            delay = new WaitForSeconds(delayTime);
+        }
+
+        void OnTriggerEnter(Collider other)
+        {
+            if (IsTeleportable(other))
+                StartCoroutine(Activate(other.gameObject));
+        }
+
+        bool IsTeleportable(Collider other)
+        {
+            return 0 != (layers.value & 1 << other.gameObject.layer);
+        }
+
+    }
